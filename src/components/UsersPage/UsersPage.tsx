@@ -1,10 +1,13 @@
 import { useCallback, useState } from 'react'
 import styled from 'styled-components'
+import { useSearchParams } from 'react-router-dom'
 import UserCard from './UserCard'
 import { useUsersQuery } from '../../api/user/userQueries'
 import { Divider, Loader as LoaderBase, Page, Typography } from '../../design-system/components'
 import UserPosts from './UserPosts'
 import { User } from '../../api/user/userModels'
+
+const USER_ID_SEARCH_PARAM = 'userId'
 
 const Loader = styled(LoaderBase)`
   height: 100dvh;
@@ -27,8 +30,9 @@ const UserCardsContainer = styled.div`
 `
 
 function UsersPage() {
+  const [searchParams, setSearchParams] = useSearchParams()
   const [closedUserIds, setClosedUserIds] = useState<number[]>([])
-  const [selectedUser, setSelectedUser] = useState<User>()
+  const selectedUserId = parseInt(searchParams.get(USER_ID_SEARCH_PARAM) || '')
 
   const usersQuery = useUsersQuery({
     select: (users) => {
@@ -36,14 +40,23 @@ function UsersPage() {
     },
   })
 
-  const onUserCardClose = useCallback((userId: number) => {
-    setClosedUserIds((prev) => [...prev, userId])
-    setSelectedUser((prev) => (prev?.id === userId ? undefined : prev))
-  }, [])
+  const onUserCardClose = useCallback(
+    (userId: number) => {
+      setClosedUserIds((prev) => [...prev, userId])
 
-  const onUserCardClick = useCallback((user: User) => {
-    setSelectedUser(user)
-  }, [])
+      if (userId === selectedUserId) {
+        setSearchParams(undefined)
+      }
+    },
+    [selectedUserId, setSearchParams],
+  )
+
+  const onUserCardClick = useCallback(
+    (user: User) => {
+      setSearchParams({ [USER_ID_SEARCH_PARAM]: `${user.id}` })
+    },
+    [setSearchParams],
+  )
 
   if (!usersQuery.isSuccess) {
     // TODO: error state
@@ -51,6 +64,8 @@ function UsersPage() {
   }
 
   const users = usersQuery.data
+
+  const selectedUser = users.find((user) => user.id === selectedUserId)
 
   return (
     <Page>

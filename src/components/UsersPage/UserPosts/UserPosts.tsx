@@ -3,8 +3,9 @@ import styled from 'styled-components'
 import UserPostCard from './UserPostCard'
 import { User } from '../../../api/user/userModels'
 import { usePostsQuery } from '../../../api/post/postQueries'
-import { Loader, Pane, Typography } from '../../../design-system/components'
+import { Loader, Typography } from '../../../design-system/components'
 import { Post } from '../../../api/post/postModels'
+import EditPostPane from './EditPostPane'
 
 const Title = styled(Typography)`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
@@ -61,11 +62,7 @@ function UserPosts({ user }: UserPostsProps) {
           <UserPostCard key={post.id} post={post} onClose={onUserPostCardClose} onClick={onUserPostCardClick} />
         ))}
       </UserPostsContainer>
-      {selectedPost && (
-        <Pane withAnimation onClose={() => setSelectedPost(undefined)}>
-          {selectedPost.title}
-        </Pane>
-      )}
+      {selectedPost && <EditPostPane onClose={() => setSelectedPost(undefined)} post={selectedPost} />}
     </>
   )
 }

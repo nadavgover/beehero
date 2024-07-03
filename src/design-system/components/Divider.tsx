@@ -4,7 +4,7 @@ const Line = styled.div`
   width: 100%;
   height: 1px;
   border-radius: 50%;
-  background-color: ${({ theme }) => theme.palette.amber[100]};
+  background-color: ${({ theme }) => theme.palette.neutral[100]};
 `
 
 interface DividerProps {

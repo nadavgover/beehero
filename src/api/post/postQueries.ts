@@ -3,6 +3,10 @@ import { PostsResponse } from './postResponses'
 import { Post } from './postModels'
 import { axiosClient } from '../axios-client'
 
+export function getPostsQueryKey(userId: number) {
+  return ['posts', { userId }]
+}
+
 async function fetchPosts(userId: number) {
   const { data } = await axiosClient.get<PostsResponse>(`/posts?userId=${userId}`)
 
@@ -16,7 +20,7 @@ interface UsePostsQueryParams<Selected> {
 
 export function usePostsQuery<Selected = Post[]>({ userId, select }: UsePostsQueryParams<Selected>) {
   return useQuery({
-    queryKey: ['posts', userId],
+    queryKey: getPostsQueryKey(userId),
     queryFn: () => fetchPosts(userId),
     select,
   })

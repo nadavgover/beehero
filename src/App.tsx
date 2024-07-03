@@ -6,7 +6,13 @@ import { GlobalStyle } from './GlobalStyle'
 import { RouterProvider } from 'react-router-dom'
 import { router } from './router'
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: Infinity,
+    },
+  },
+})
 
 function App() {
   return (
