@@ -26,6 +26,7 @@ const UserCardRow = styled.div<{ $clickable?: boolean }>`
     $clickable &&
     css`
       cursor: pointer;
+      width: fit-content;
     `}
 `
 

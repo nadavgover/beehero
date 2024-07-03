@@ -13,15 +13,13 @@ async function fetchPosts(userId: number) {
   return data
 }
 
-interface UsePostsQueryParams<Selected> {
+interface UsePostsQueryParams {
   userId: number
-  select?: (posts: Post[]) => Selected
 }
 
-export function usePostsQuery<Selected = Post[]>({ userId, select }: UsePostsQueryParams<Selected>) {
+export function usePostsQuery({ userId }: UsePostsQueryParams) {
   return useQuery({
     queryKey: getPostsQueryKey(userId),
     queryFn: () => fetchPosts(userId),
-    select,
   })
 }

@@ -1,23 +1,38 @@
 import React, { useCallback } from 'react'
+import styled, { css } from 'styled-components'
 import { Post } from '../../../api/post/postModels'
-import { Card, CardContent, CardHeader, Typography } from '../../../design-system/components'
+import { Card as CardBase, CardContent, CardHeader, Typography } from '../../../design-system/components'
+import { CARD_HOVER_COLOR } from '../../../design-system/components/Card'
+
+const Card = styled(CardBase)<{ $isSelected?: boolean }>`
+  ${({ $isSelected }) =>
+    $isSelected &&
+    css`
+      background-color: ${CARD_HOVER_COLOR};
+
+      &:hover {
+        cursor: initial;
+      }
+    `}
+`
 
 interface UserPostCardProps {
   post: Post
-  onClose?: (postId: number) => void
+  onClose?: (post: Post) => void
   onClick?: (post: Post) => void
+  isSelected?: boolean
 }
-function UserPostCard({ post, onClose, onClick }: UserPostCardProps) {
+function UserPostCard({ post, onClose, onClick, isSelected }: UserPostCardProps) {
   const handleClose = useCallback(() => {
-    onClose?.(post.id)
-  }, [onClose, post.id])
+    onClose?.(post)
+  }, [onClose, post])
 
   const handleClick = useCallback(() => {
     onClick?.(post)
   }, [onClick, post])
 
   return (
-    <Card onClose={handleClose} onClick={handleClick}>
+    <Card onClose={handleClose} onClick={handleClick} $isSelected={isSelected}>
       <CardHeader>
         <Typography variant="body1" truncate>
           {post.title}

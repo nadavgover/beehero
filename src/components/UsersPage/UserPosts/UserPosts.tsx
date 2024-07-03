@@ -2,10 +2,11 @@ import { useCallback, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import UserPostCard from './UserPostCard'
 import { User } from '../../../api/user/userModels'
-import { usePostsQuery } from '../../../api/post/postQueries'
+import { getPostsQueryKey, usePostsQuery } from '../../../api/post/postQueries'
 import { Loader, Typography } from '../../../design-system/components'
 import { Post } from '../../../api/post/postModels'
 import EditPostPane from './EditPostPane'
+import { useQueryClient } from '@tanstack/react-query'
 
 const Title = styled(Typography)`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
@@ -21,7 +22,7 @@ interface UserPostsProps {
   user: User
 }
 function UserPosts({ user }: UserPostsProps) {
-  const [closedPostIds, setClosedPostIds] = useState<number[]>([])
+  const queryClient = useQueryClient()
   const [selectedPost, setSelectedPost] = useState<Post>()
 
   useEffect(() => {
@@ -31,15 +32,26 @@ function UserPosts({ user }: UserPostsProps) {
 
   const postsQuery = usePostsQuery({
     userId: user.id,
-    select: (posts) => {
-      return posts.filter((post) => !closedPostIds.includes(post.id))
-    },
   })
 
-  const onUserPostCardClose = useCallback((postId: number) => {
-    setClosedPostIds((prev) => [...prev, postId])
-    setSelectedPost((prev) => (prev?.id === postId ? undefined : prev))
-  }, [])
+  const onUserPostCardClose = useCallback(
+    (post: Post) => {
+      // Remove from state
+      queryClient.setQueryData<Post[]>(getPostsQueryKey(post.userId), (oldPosts): Post[] | undefined => {
+        if (!oldPosts) {
+          return
+        }
+
+        const newPosts = oldPosts.filter((oldPost) => post.id !== oldPost.id)
+
+        return newPosts
+      })
+
+      // Remove selected post if it was removed
+      setSelectedPost((prev) => (prev?.id === post.id ? undefined : prev))
+    },
+    [queryClient],
+  )
 
   const onUserPostCardClick = useCallback((post: Post) => {
     setSelectedPost(post)
@@ -59,7 +71,13 @@ function UserPosts({ user }: UserPostsProps) {
       </Title>
       <UserPostsContainer>
         {postsOfUser.map((post) => (
-          <UserPostCard key={post.id} post={post} onClose={onUserPostCardClose} onClick={onUserPostCardClick} />
+          <UserPostCard
+            key={post.id}
+            post={post}
+            onClose={onUserPostCardClose}
+            onClick={onUserPostCardClick}
+            isSelected={post.id === selectedPost?.id}
+          />
         ))}
       </UserPostsContainer>
       {selectedPost && <EditPostPane onClose={() => setSelectedPost(undefined)} post={selectedPost} />}
