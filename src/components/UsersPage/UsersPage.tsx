@@ -4,6 +4,7 @@ import UserCard from './UserCard'
 import { useUsersQuery } from '../../api/user/userQueries'
 import { Divider, Loader as LoaderBase, Page, Typography } from '../../design-system/components'
 import UserPosts from './UserPosts'
+import { User } from '../../api/user/userModels'
 
 const Loader = styled(LoaderBase)`
   height: 100dvh;
@@ -27,7 +28,7 @@ const UserCardsContainer = styled.div`
 
 function UsersPage() {
   const [closedUserIds, setClosedUserIds] = useState<number[]>([])
-  const [selectedUserId, setSelectedUserId] = useState<number>()
+  const [selectedUser, setSelectedUser] = useState<User>()
 
   const usersQuery = useUsersQuery({
     select: (users) => {
@@ -37,11 +38,11 @@ function UsersPage() {
 
   const onUserCardClose = useCallback((userId: number) => {
     setClosedUserIds((prev) => [...prev, userId])
-    setSelectedUserId((prev) => (prev === userId ? undefined : prev))
+    setSelectedUser((prev) => (prev?.id === userId ? undefined : prev))
   }, [])
 
-  const onUserCardClick = useCallback((userId: number) => {
-    setSelectedUserId(userId)
+  const onUserCardClick = useCallback((user: User) => {
+    setSelectedUser(user)
   }, [])
 
   if (!usersQuery.isSuccess) {
@@ -57,13 +58,21 @@ function UsersPage() {
         <Title variant="h1">Users</Title>
         <UserCardsContainer>
           {users.map((user) => {
-            return <UserCard key={user.id} user={user} onClose={onUserCardClose} onClick={onUserCardClick} />
+            return (
+              <UserCard
+                key={user.id}
+                user={user}
+                onClose={onUserCardClose}
+                onClick={onUserCardClick}
+                isSelected={user.id === selectedUser?.id}
+              />
+            )
           })}
         </UserCardsContainer>
-        {selectedUserId && (
+        {selectedUser && (
           <>
             <Divider />
-            <UserPosts userId={selectedUserId} />
+            <UserPosts user={selectedUser} />
           </>
         )}
       </Column>

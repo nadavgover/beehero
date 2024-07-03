@@ -1,6 +1,7 @@
 import React from 'react'
 import styled, { css } from 'styled-components'
 import IconButton from './IconButton'
+import { palette } from '../theme/palette'
 
 const CloseButton = styled(IconButton)`
   position: absolute;
@@ -9,19 +10,21 @@ const CloseButton = styled(IconButton)`
   padding: ${({ theme }) => theme.spacing(1)};
 `
 
+export const CARD_HOVER_COLOR = palette.amber[50]
+
 const Container = styled.div<{ $isClickable: boolean }>`
   position: relative;
   border-radius: ${({ theme }) => theme.spacing(1)};
   border: 1px solid ${({ theme }) => theme.palette.amber[400]};
   padding: ${({ theme }) => theme.spacing(1.5)};
 
-  ${({ $isClickable, theme }) =>
+  ${({ $isClickable }) =>
     $isClickable &&
     css`
       cursor: pointer;
 
       &:hover {
-        background-color: ${theme.palette.amber[50]};
+        background-color: ${CARD_HOVER_COLOR};
       }
     `}
 `

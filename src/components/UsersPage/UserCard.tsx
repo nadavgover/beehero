@@ -1,7 +1,20 @@
 import React, { useCallback } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { User } from '../../api/user/userModels'
-import { Card, Icon, Typography, CardHeader, CardContent } from '../../design-system/components'
+import { Card as CardBase, Icon, Typography, CardHeader, CardContent } from '../../design-system/components'
+import { CARD_HOVER_COLOR } from '../../design-system/components/Card'
+
+const Card = styled(CardBase)<{ $isSelected?: boolean }>`
+  ${({ $isSelected }) =>
+    $isSelected &&
+    css`
+      background-color: ${CARD_HOVER_COLOR};
+
+      &:hover {
+        cursor: initial;
+      }
+    `}
+`
 
 const UserCardRow = styled.div`
   display: flex;
@@ -16,20 +29,21 @@ const LowerCaseText = styled(Typography)`
 interface UserCardProps {
   user: User
   onClose?: (userId: number) => void
-  onClick?: (userId: number) => void
+  onClick?: (user: User) => void
+  isSelected?: boolean
 }
 
-function UserCard({ user, onClose, onClick }: UserCardProps) {
+function UserCard({ user, onClose, onClick, isSelected }: UserCardProps) {
   const handleClose = useCallback(() => {
     onClose?.(user.id)
   }, [onClose, user.id])
 
   const handleClick = useCallback(() => {
-    onClick?.(user.id)
-  }, [onClick, user.id])
+    onClick?.(user)
+  }, [onClick, user])
 
   return (
-    <Card onClose={handleClose} onClick={handleClick}>
+    <Card onClose={handleClose} onClick={handleClick} $isSelected={isSelected}>
       <CardHeader>
         <Typography variant="body1" truncate>
           {user.name} ({user.username})

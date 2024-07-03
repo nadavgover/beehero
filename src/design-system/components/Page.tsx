@@ -9,6 +9,7 @@ interface PageProps {
 const PageContainer = styled.div`
   padding-inline: 5vw;
   padding-top: ${({ theme }) => theme.spacing(3)};
+  padding-bottom: ${({ theme }) => theme.spacing(3)};
 
   @media (min-width: ${({ theme }) => theme.breakpoints.md}) {
     padding-inline: 10vw;
