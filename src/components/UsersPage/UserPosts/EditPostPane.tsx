@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { Button, Pane, Typography } from '../../../design-system/components'
 import { Post } from '../../../api/post/postModels'
@@ -46,13 +46,31 @@ function EditPostPane({ onClose, post }: EditPostPaneProps) {
   const queryClient = useQueryClient()
   const [title, setTitle] = useState(post.title)
   const [body, setBody] = useState(post.body)
+  const titleRef = useRef<HTMLInputElement>(null)
+  const bodyRef = useRef<HTMLTextAreaElement>(null)
 
   const onTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(e.target.value)
   }
 
+  const onTitleEnterPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      if (bodyRef.current) {
+        bodyRef.current.focus()
+      }
+    }
+  }
+
   const onBodyChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setBody(e.target.value)
+  }
+
+  const onBodyEnterPress = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter') {
+      if (titleRef.current) {
+        titleRef.current.focus()
+      }
+    }
   }
 
   const onSave = () => {
@@ -77,12 +95,12 @@ function EditPostPane({ onClose, post }: EditPostPaneProps) {
       <Column>
         <Typography variant="caption1">
           <div>Title</div>
-          <Input value={title} onChange={onTitleChange} />
+          <Input value={title} onChange={onTitleChange} ref={titleRef} onKeyUp={onTitleEnterPress} />
         </Typography>
 
         <Typography variant="caption1">
           <div>Body</div>
-          <TextArea value={body} onChange={onBodyChange} rows={5} />
+          <TextArea value={body} onChange={onBodyChange} rows={5} ref={bodyRef} onKeyUp={onBodyEnterPress} />
         </Typography>
 
         <ButtonsContainer>
