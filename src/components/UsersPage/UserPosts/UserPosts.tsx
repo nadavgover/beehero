@@ -3,7 +3,8 @@ import styled from 'styled-components'
 import UserPostCard from './UserPostCard'
 import { User } from '../../../api/user/userModels'
 import { usePostsQuery } from '../../../api/post/postQueries'
-import { Loader, Typography } from '../../../design-system/components'
+import { Loader, Pane, Typography } from '../../../design-system/components'
+import { Post } from '../../../api/post/postModels'
 
 const Title = styled(Typography)`
   margin-bottom: ${({ theme }) => theme.spacing(2)};
@@ -20,11 +21,11 @@ interface UserPostsProps {
 }
 function UserPosts({ user }: UserPostsProps) {
   const [closedPostIds, setClosedPostIds] = useState<number[]>([])
-  const [selectedPostId, setSelectedPostId] = useState<number>()
+  const [selectedPost, setSelectedPost] = useState<Post>()
 
   useEffect(() => {
     // When the user id changes, reset the selected post id
-    setSelectedPostId(undefined)
+    setSelectedPost(undefined)
   }, [user])
 
   const postsQuery = usePostsQuery({
@@ -36,11 +37,11 @@ function UserPosts({ user }: UserPostsProps) {
 
   const onUserPostCardClose = useCallback((postId: number) => {
     setClosedPostIds((prev) => [...prev, postId])
-    setSelectedPostId((prev) => (prev === postId ? undefined : prev))
+    setSelectedPost((prev) => (prev?.id === postId ? undefined : prev))
   }, [])
 
-  const onUserPostCardClick = useCallback((postId: number) => {
-    setSelectedPostId(postId)
+  const onUserPostCardClick = useCallback((post: Post) => {
+    setSelectedPost(post)
   }, [])
 
   if (!postsQuery.isSuccess) {
@@ -60,7 +61,11 @@ function UserPosts({ user }: UserPostsProps) {
           <UserPostCard key={post.id} post={post} onClose={onUserPostCardClose} onClick={onUserPostCardClick} />
         ))}
       </UserPostsContainer>
-      {selectedPostId && <div>{selectedPostId}</div>}
+      {selectedPost && (
+        <Pane withAnimation onClose={() => setSelectedPost(undefined)}>
+          {selectedPost.title}
+        </Pane>
+      )}
     </>
   )
 }

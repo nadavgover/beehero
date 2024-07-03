@@ -41,6 +41,7 @@ function Card({ children, onClose, onClick, className }: CardProps) {
     e.stopPropagation()
     onClose?.()
   }
+
   return (
     <Container className={className} $isClickable={Boolean(onClick)} onClick={onClick}>
       {children}

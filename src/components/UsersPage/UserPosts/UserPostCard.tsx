@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, Typography } from '../../../design-syste
 interface UserPostCardProps {
   post: Post
   onClose?: (postId: number) => void
-  onClick?: (postId: number) => void
+  onClick?: (post: Post) => void
 }
 function UserPostCard({ post, onClose, onClick }: UserPostCardProps) {
   const handleClose = useCallback(() => {
@@ -13,8 +13,8 @@ function UserPostCard({ post, onClose, onClick }: UserPostCardProps) {
   }, [onClose, post.id])
 
   const handleClick = useCallback(() => {
-    onClick?.(post.id)
-  }, [onClick, post.id])
+    onClick?.(post)
+  }, [onClick, post])
 
   return (
     <Card onClose={handleClose} onClick={handleClick}>
