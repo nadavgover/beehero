@@ -34,7 +34,7 @@ function UserPostCard({ post, onClose, onClick, isSelected }: UserPostCardProps)
   return (
     <Card onClose={handleClose} onClick={handleClick} $isSelected={isSelected}>
       <CardHeader>
-        <Typography variant="body1" truncate>
+        <Typography variant="body1" bold truncate>
           {post.title}
         </Typography>
       </CardHeader>

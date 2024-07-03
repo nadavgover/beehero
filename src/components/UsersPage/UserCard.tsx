@@ -65,7 +65,7 @@ function UserCard({ user, onClose, onClick, isSelected }: UserCardProps) {
   return (
     <Card onClose={handleClose} onClick={handleClick} $isSelected={isSelected}>
       <CardHeader>
-        <Typography variant="body1" truncate>
+        <Typography variant="body1" bold truncate>
           {user.name} ({user.username})
         </Typography>
       </CardHeader>

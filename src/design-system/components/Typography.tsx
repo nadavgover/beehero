@@ -21,9 +21,9 @@ const fontDefinitionsByTypographyVariant: Record<TypographyVariant, FontDefiniti
   [TypographyVariant.caption1]: { fontSize: '13px', lineHeight: '18px' },
 }
 
-const Text = styled.p<{ variant: TypographyVariant; bold?: boolean; $truncate?: boolean }>`
+const Text = styled.p<{ variant: TypographyVariant; $bold?: boolean; $truncate?: boolean }>`
   font-family: Inter, sans-serif;
-  font-weight: ${({ bold }) => (bold ? 700 : 400)};
+  font-weight: ${({ $bold }) => ($bold ? 700 : 400)};
 
   ${({ variant }) => {
     const variantFontDefinition = fontDefinitionsByTypographyVariant[variant]
@@ -73,7 +73,7 @@ function Typography({ children, variant = TypographyVariant.body1, bold, truncat
     <Text
       ref={ref}
       variant={variant}
-      bold={bold}
+      $bold={bold}
       $truncate={truncate}
       className={className}
       onMouseEnter={addTooltipOnHover}
