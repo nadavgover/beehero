@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react'
 import styled, { css } from 'styled-components'
+import { useNavigate } from 'react-router-dom'
 import { User } from '../../api/user/userModels'
 import { Card as CardBase, Icon, Typography, CardHeader, CardContent } from '../../design-system/components'
 import { CARD_HOVER_COLOR } from '../../design-system/components/Card'
@@ -16,10 +17,16 @@ const Card = styled(CardBase)<{ $isSelected?: boolean }>`
     `}
 `
 
-const UserCardRow = styled.div`
+const UserCardRow = styled.div<{ $clickable?: boolean }>`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing(1.5)};
+
+  ${({ $clickable }) =>
+    $clickable &&
+    css`
+      cursor: pointer;
+    `}
 `
 
 const LowerCaseText = styled(Typography)`
@@ -34,6 +41,8 @@ interface UserCardProps {
 }
 
 function UserCard({ user, onClose, onClick, isSelected }: UserCardProps) {
+  const navigate = useNavigate()
+
   const handleClose = useCallback(() => {
     onClose?.(user.id)
   }, [onClose, user.id])
@@ -41,6 +50,16 @@ function UserCard({ user, onClose, onClick, isSelected }: UserCardProps) {
   const handleClick = useCallback(() => {
     onClick?.(user)
   }, [onClick, user])
+
+  const handleCoordinatesClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation()
+      const { lat, lng } = user.address.geo
+
+      navigate(`/map/${lat}/${lng}`)
+    },
+    [navigate, user.address.geo],
+  )
 
   return (
     <Card onClose={handleClose} onClick={handleClick} $isSelected={isSelected}>
@@ -58,7 +77,7 @@ function UserCard({ user, onClose, onClick, isSelected }: UserCardProps) {
           </LowerCaseText>
         </UserCardRow>
 
-        <UserCardRow>
+        <UserCardRow $clickable onClick={handleCoordinatesClick}>
           <Icon name="location" />
           <Typography variant="caption1" truncate>
             lat: {user.address.geo.lat}, lng: {user.address.geo.lng}
