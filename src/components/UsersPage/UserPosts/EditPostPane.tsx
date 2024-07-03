@@ -104,7 +104,7 @@ function EditPostPane({ onClose, post }: EditPostPaneProps) {
         </Typography>
 
         <ButtonsContainer>
-          <Button variant="primary" onClick={onSave}>
+          <Button variant="primary" onClick={onSave} disabled={!title || !body}>
             <Typography variant="body1">Save</Typography>
           </Button>
           <Button variant="secondary" onClick={onClose}>

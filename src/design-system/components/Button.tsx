@@ -25,14 +25,14 @@ export const colorByVariant: Record<
 
 const ButtonBase = styled.button<ButtonProps & { $variant: ButtonVariant }>`
   border: 0;
-  cursor: pointer;
+  cursor: ${({ disabled }) => !disabled && 'pointer'};
   border-radius: ${({ theme }) => theme.spacing(0.5)};
 
-  ${({ $variant, theme }) => css`
+  ${({ $variant, disabled }) => css`
     background-color: ${colorByVariant[$variant].color};
 
     &:hover {
-      background-color: ${colorByVariant[$variant].hoverColor};
+      background-color: ${!disabled && colorByVariant[$variant].hoverColor};
     }
   `}
 `
